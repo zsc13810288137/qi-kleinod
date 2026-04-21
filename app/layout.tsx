@@ -16,14 +16,25 @@ export default function RootLayout({
   const [user, setUser] = useState<any>(null);
   const supabase = createClient();
 
-  // 使用 selector 安全获取 totalItems，避免 hydration mismatch
-  const totalItems = useCartStore((state) => state.getTotalItems?.() || 0);
+  // 使用客户端渲染安全的 totalItems
+  const [totalItems, setTotalItems] = useState(0);
   const addToCart = useCartStore((state) => state.addToCart);
 
   const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [addAnimation, setAddAnimation] = useState(false);
+
+  // 同步 Zustand 的 totalItems 到本地 state，避免 hydration mismatch
+  useEffect(() => {
+    const unsubscribe = useCartStore.subscribe(
+      (state) => setTotalItems(state.getTotalItems?.() || 0)
+    );
+    // 初始化
+    setTotalItems(useCartStore.getState().getTotalItems?.() || 0);
+
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     const getUser = async () => {
@@ -40,7 +51,7 @@ export default function RootLayout({
     return () => subscription.unsubscribe();
   }, []);
 
-  // 全局监听 addToCart 事件（用于 +1 动画）
+  // +1 动画监听
   useEffect(() => {
     const handleAddEvent = () => {
       setAddAnimation(true);
@@ -48,7 +59,6 @@ export default function RootLayout({
     };
 
     window.addEventListener('addToCart', handleAddEvent);
-
     return () => window.removeEventListener('addToCart', handleAddEvent);
   }, []);
 
@@ -68,23 +78,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-50">
-        {/* 顶部导航栏 */}
         <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
             
-            {/* 左侧：Logo + Shop & Our Story */}
+            {/* 左侧 */}
             <div className="flex items-center gap-10">
-              <Link href="/" className="text-2xl font-bold text-gray-900">
-                Qi-Kleinod
-              </Link>
-
+              <Link href="/" className="text-2xl font-bold text-gray-900">Qi-Kleinod</Link>
               <div className="flex items-center gap-8 text-sm font-medium">
                 <Link href="/shop" className="hover:text-black transition">Shop</Link>
                 <Link href="/story" className="hover:text-black transition">Our Story</Link>
               </div>
             </div>
 
-            {/* 中间：搜索栏 */}
+            {/* 搜索 */}
             <div className="flex-1 max-w-xl mx-12">
               <form onSubmit={handleSearch} className="relative">
                 <input
@@ -98,37 +104,36 @@ export default function RootLayout({
               </form>
             </div>
 
-            {/* 右侧：My Orders → Cart → 用户 → Logout → Contact Us */}
+            {/* 右侧 */}
             <div className="flex items-center gap-8">
-              <Link href="/orders" className="text-sm font-medium hover:text-black transition">
-                My Orders
-              </Link>
+              <Link href="/orders" className="text-sm font-medium hover:text-black transition">My Orders</Link>
 
               {/* 购物车 */}
               <Link href="/cart" className="relative flex items-center gap-2 text-gray-700 hover:text-black transition">
                 <span className="text-2xl">🛒</span>
                 <span className="text-sm font-medium">Cart</span>
-                
-                {/* +1 动画 */}
+
                 {addAnimation && (
                   <span className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full animate-bounce">
                     +1
                   </span>
                 )}
 
-                {/* 购物车数量徽章 - 使用客户端安全渲染 */}
+                {/* 最终修复：使用本地 state + suppressHydrationWarning */}
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                  <span 
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full"
+                    suppressHydrationWarning
+                  >
                     {totalItems}
                   </span>
                 )}
               </Link>
 
-              {/* 用户区域 */}
               {user ? (
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-gray-600 hidden md:block">{user.email}</span>
-                  <button
+                  <button 
                     onClick={handleLogout}
                     className="px-5 py-2 text-sm border border-gray-300 rounded-2xl hover:bg-gray-100 transition"
                   >
@@ -137,52 +142,23 @@ export default function RootLayout({
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
-                  <Link
-                    href="/auth/login"
-                    className="px-6 py-2.5 text-sm font-medium hover:bg-gray-100 rounded-2xl transition"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="px-6 py-2.5 bg-black text-white text-sm font-medium rounded-2xl hover:bg-gray-800 transition"
-                  >
-                    Register
-                  </Link>
+                  <Link href="/auth/login" className="px-6 py-2.5 text-sm font-medium hover:bg-gray-100 rounded-2xl transition">Sign In</Link>
+                  <Link href="/auth/register" className="px-6 py-2.5 bg-black text-white text-sm font-medium rounded-2xl hover:bg-gray-800 transition">Register</Link>
                 </div>
               )}
 
-              {/* Contact Us */}
-              <Link href="/contact" className="text-sm font-medium hover:text-black transition">
-                Contact Us
-              </Link>
+              <Link href="/contact" className="text-sm font-medium hover:text-black transition">Contact Us</Link>
             </div>
           </div>
         </nav>
 
-        {/* 页面内容 */}
-        <main>
-          {children}
-        </main>
+        <main>{children}</main>
 
-        {/* Toast 容器 */}
-        <Toaster 
-          position="top-center" 
-          richColors 
-          closeButton 
-          toastOptions={{
-            className: 'rounded-2xl',
-          }}
-        />
+        <Toaster position="top-center" richColors closeButton />
 
-        {/* 右下角 Admin Login */}
         <div className="fixed bottom-6 right-6 z-50">
-          <Link
-            href="/admin"
-            className="text-xs text-gray-400 hover:text-gray-600 transition flex items-center gap-1.5 opacity-60 hover:opacity-100"
-          >
-            <span>⚙️</span>
-            <span>Admin Login</span>
+          <Link href="/admin" className="text-xs text-gray-400 hover:text-gray-600 transition flex items-center gap-1.5 opacity-60 hover:opacity-100">
+            ⚙️ Admin Login
           </Link>
         </div>
       </body>
