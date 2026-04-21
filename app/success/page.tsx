@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@/lib/cartStore';
 import { createClient } from '@/lib/supabase';
+export const dynamic = 'force-dynamic';
 
 function SuccessContent() {
   const searchParams = useSearchParams();

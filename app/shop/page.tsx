@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/lib/cartStore';
+export const dynamic = 'force-dynamic';
 
 const supabase = createClient();   // ← 这里改成不传参数
 
