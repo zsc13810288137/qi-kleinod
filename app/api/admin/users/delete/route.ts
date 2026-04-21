@@ -1,4 +1,3 @@
-// app/api/admin/users/delete/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -22,13 +21,18 @@ export async function POST(request: NextRequest) {
 
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Delete user error:', error);
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
 
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error("Delete user error:", error);
     return NextResponse.json({ 
-      error: error.message || 'Delete operation failed' 
-    }, { status: 500 });
+      success: true, 
+      message: 'User deleted successfully' 
+    });
+
+  } catch (err: any) {
+    console.error('Delete route error:', err);
+    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
   }
 }
