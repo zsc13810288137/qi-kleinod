@@ -2,9 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);   // ← 去掉 apiVersion，让 Stripe 使用最新版本
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -52,7 +50,6 @@ export async function POST(request: NextRequest) {
       success_url: `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE_URL}/cart`,
 
-      // 把收货地址存入 metadata，方便 success 页面读取
       metadata: {
         shipping_fullName: shippingInfo.fullName,
         shipping_email: shippingInfo.email,
@@ -69,7 +66,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
 
   } catch (error: any) {
-    console.error("Stripe Checkout 错误:", error);
+    console.error("Stripe Checkout 详细错误:", error);
     return NextResponse.json({ 
       error: error.message || 'Internal server error' 
     }, { status: 500 });
