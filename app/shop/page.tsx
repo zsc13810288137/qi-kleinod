@@ -1,15 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase';
+import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/lib/cartStore';
-import { toast } from 'sonner';
-import { createClient } from '@/lib/supabase';
 
-// ... 在组件内部使用：
-const supabase = createClient();
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 type Product = {
   id: string;
@@ -23,21 +24,20 @@ type Product = {
   weight: number | null;
 };
 
-export default function ShopPage() {
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+// 搜索相关的客户端组件（使用 useSearchParams）
+function ShopContent() {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get('search')?.toLowerCase() || '';
-
   const addToCart = useCartStore((state) => state.addToCart);
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchProducts() {
       try {
         console.log("开始从 Supabase 获取商品数据... 搜索词:", searchTerm);
-
         const { data, error } = await supabase
           .from('products')
           .select('*')
@@ -50,7 +50,17 @@ export default function ShopPage() {
           return;
         }
 
-        setAllProducts(data || []);
+        let filteredProducts = data || [];
+
+        if (searchTerm) {
+          filteredProducts = filteredProducts.filter((product: Product) =>
+            product.name.toLowerCase().includes(searchTerm) ||
+            (product.description && product.description.toLowerCase().includes(searchTerm)) ||
+            (product.category && product.category.toLowerCase().includes(searchTerm))
+          );
+        }
+
+        setProducts(filteredProducts);
       } catch (err: any) {
         console.error("意外错误:", err);
         setError(err.message);
@@ -62,168 +72,108 @@ export default function ShopPage() {
     fetchProducts();
   }, [searchTerm]);
 
-  // 根据名称判断是否为 Fox 商品（你可以根据实际名称调整关键词）
-  const isFoxProduct = (name: string) => 
-    name.toLowerCase().includes('fox');
-
-  // 过滤后的商品
-  const filteredProducts = allProducts.filter((product) =>
-    !searchTerm ||
-    product.name.toLowerCase().includes(searchTerm) ||
-    (product.description && product.description.toLowerCase().includes(searchTerm)) ||
-    (product.category && product.category.toLowerCase().includes(searchTerm)) ||
-    (product.material && product.material.toLowerCase().includes(searchTerm))
-  );
-
-  const koalaProducts = filteredProducts.filter(p => !isFoxProduct(p.name));
-  const foxProducts = filteredProducts.filter(p => isFoxProduct(p.name));
-
-  const handleAddToCart = (product: Product) => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.images?.[0] || '',
-    });
-
-    toast.success(`Added ${product.name}`, {
-      description: "You can check your cart anytime.",
-      duration: 2200,
-    });
-
-    window.dispatchEvent(new Event('addToCart'));
-  };
-
   if (loading) return <div className="min-h-screen flex items-center justify-center text-xl">Loading products...</div>;
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-8">
-        <div className="text-center">
-          <p className="text-red-600">Error: {error}</p>
-        </div>
-      </div>
-    );
-  }
+  if (error) return <div className="min-h-screen flex items-center justify-center text-xl text-red-600">Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-6">
-        {/* 页面标题 + 搜索提示 */}
-        <div className="flex justify-between items-end mb-12">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900">
-              {searchTerm ? `Search Results for "${searchTerm}"` : 'Our Collection'}
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Discover our adorable koala and fox-inspired jewelry
-            </p>
-          </div>
+        <h1 className="text-4xl font-bold text-center mb-4">Our Collection</h1>
+        <p className="text-gray-600 text-center mb-12">
+          Discover our adorable koala-inspired and fox-themed jewelry
+        </p>
 
-          {searchTerm && (
-            <Link href="/shop" className="text-black hover:underline">
-              ← Clear Search
-            </Link>
-          )}
+        {/* Koala Collection */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-semibold mb-8 text-center">Koala Collection</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {products.filter(p => !p.name.toLowerCase().includes('fox')).map((product) => (
+              <div key={product.id} className="bg-white rounded-3xl shadow-lg overflow-hidden group">
+                <Link href={`/shop/${product.id}`} className="block relative h-80 bg-gray-100">
+                  {product.images?.[0] ? (
+                    <Image
+                      src={product.images[0]}
+                      alt={product.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-400">No Image</div>
+                  )}
+                </Link>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-xl font-semibold line-clamp-2">{product.name}</h3>
+                    <span className="text-2xl font-bold text-emerald-600">€{product.price}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
+                  <button
+                    onClick={() => addToCart({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      image: product.images?.[0] || '',
+                    })}
+                    className="w-full bg-black text-white py-3 rounded-2xl hover:bg-gray-800 transition"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* ==================== KOALA COLLECTION ==================== */}
-        {koalaProducts.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-10 h-1 bg-amber-600 rounded"></div>
-              <h2 className="text-3xl font-bold text-gray-900">Koala Collection</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {koalaProducts.map((product) => (
-                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
-              ))}
-            </div>
+        {/* Fox Collection */}
+        <div>
+          <h2 className="text-3xl font-semibold mb-8 text-center">Fox Collection</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {products.filter(p => p.name.toLowerCase().includes('fox')).map((product) => (
+              <div key={product.id} className="bg-white rounded-3xl shadow-lg overflow-hidden group">
+                <Link href={`/shop/${product.id}`} className="block relative h-80 bg-gray-100">
+                  {product.images?.[0] ? (
+                    <Image
+                      src={product.images[0]}
+                      alt={product.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-400">No Image</div>
+                  )}
+                </Link>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-xl font-semibold line-clamp-2">{product.name}</h3>
+                    <span className="text-2xl font-bold text-emerald-600">€{product.price}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
+                  <button
+                    onClick={() => addToCart({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      image: product.images?.[0] || '',
+                    })}
+                    className="w-full bg-black text-white py-3 rounded-2xl hover:bg-gray-800 transition"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-
-        {/* ==================== FOX COLLECTION ==================== */}
-        {foxProducts.length > 0 && (
-          <div>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-10 h-1 bg-orange-600 rounded"></div>
-              <h2 className="text-3xl font-bold text-gray-900">Fox Collection</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {foxProducts.map((product) => (
-                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 无商品提示 */}
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-2xl text-gray-500">No products found for "{searchTerm}"</p>
-            <Link href="/shop" className="mt-6 inline-block text-black underline">
-              Back to All Products
-            </Link>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
 }
 
-// 提取为独立组件，减少代码重复
-function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: (product: Product) => void }) {
+// 主页面组件（Server Component）
+export default function ShopPage() {
   return (
-    <div className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition-all group flex flex-col h-full">
-      {/* 图片区域 */}
-      <Link href={`/shop/${product.id}`} className="relative block h-80 bg-gray-100 overflow-hidden">
-        {product.images && product.images.length > 0 ? (
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-            No Image
-          </div>
-        )}
-      </Link>
-
-      {/* 内容区域 */}
-      <div className="p-6 flex flex-col flex-1">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="text-xl font-semibold text-gray-900 line-clamp-2 flex-1 pr-2">
-            {product.name}
-          </h3>
-          <span className="text-2xl font-bold text-emerald-600 whitespace-nowrap">
-            €{product.price.toLocaleString()}
-          </span>
-        </div>
-
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
-          {product.description}
-        </p>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          {product.category && (
-            <span className="px-3 py-1 bg-gray-100 text-xs rounded-full">{product.category}</span>
-          )}
-          {product.material && (
-            <span className="px-3 py-1 bg-amber-100 text-xs rounded-full">{product.material}</span>
-          )}
-        </div>
-
-        <button
-          onClick={() => onAddToCart(product)}
-          className="mt-auto w-full bg-black text-white py-3.5 rounded-2xl hover:bg-gray-800 transition-colors font-medium"
-        >
-          Add to Cart
-        </button>
-      </div>
-    </div>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-xl">Loading shop...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }
