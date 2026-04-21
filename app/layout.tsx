@@ -15,7 +15,11 @@ export default function RootLayout({
 }) {
   const [user, setUser] = useState<any>(null);
   const supabase = createClient();
-  const { totalItems, addToCart: storeAddToCart } = useCartStore();
+
+  // 使用 selector 安全获取 totalItems，避免 hydration mismatch
+  const totalItems = useCartStore((state) => state.getTotalItems?.() || 0);
+  const addToCart = useCartStore((state) => state.addToCart);
+
   const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,7 +40,7 @@ export default function RootLayout({
     return () => subscription.unsubscribe();
   }, []);
 
-  // 全局监听 addToCart 事件（详情页和首页使用）
+  // 全局监听 addToCart 事件（用于 +1 动画）
   useEffect(() => {
     const handleAddEvent = () => {
       setAddAnimation(true);
@@ -59,19 +63,6 @@ export default function RootLayout({
       router.push(`/shop?search=${encodeURIComponent(searchTerm.trim())}`);
       setSearchTerm('');
     }
-  };
-
-  // 统一的 Add to Cart 处理函数
-  const handleGlobalAddToCart = (product: any) => {
-    storeAddToCart(product);
-    setAddAnimation(true);
-
-    toast.success(`Added ${product.name}`, {
-      description: "You can check your cart anytime.",
-      duration: 2200,
-    });
-
-    setTimeout(() => setAddAnimation(false), 800);
   };
 
   return (
@@ -107,23 +98,25 @@ export default function RootLayout({
               </form>
             </div>
 
-            {/* 右侧：My Orders → Cart → 用户信息 → Logout → Contact Us */}
+            {/* 右侧：My Orders → Cart → 用户 → Logout → Contact Us */}
             <div className="flex items-center gap-8">
               <Link href="/orders" className="text-sm font-medium hover:text-black transition">
                 My Orders
               </Link>
 
-              {/* 购物车 + +1 动画 */}
+              {/* 购物车 */}
               <Link href="/cart" className="relative flex items-center gap-2 text-gray-700 hover:text-black transition">
                 <span className="text-2xl">🛒</span>
                 <span className="text-sm font-medium">Cart</span>
                 
+                {/* +1 动画 */}
                 {addAnimation && (
                   <span className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full animate-bounce">
                     +1
                   </span>
                 )}
 
+                {/* 购物车数量徽章 - 使用客户端安全渲染 */}
                 {totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
                     {totalItems}
@@ -159,7 +152,7 @@ export default function RootLayout({
                 </div>
               )}
 
-              {/* Contact Us - 放在最右边 */}
+              {/* Contact Us */}
               <Link href="/contact" className="text-sm font-medium hover:text-black transition">
                 Contact Us
               </Link>
@@ -185,7 +178,7 @@ export default function RootLayout({
         {/* 右下角 Admin Login */}
         <div className="fixed bottom-6 right-6 z-50">
           <Link
-            href="/admin/contacts"
+            href="/admin"
             className="text-xs text-gray-400 hover:text-gray-600 transition flex items-center gap-1.5 opacity-60 hover:opacity-100"
           >
             <span>⚙️</span>
