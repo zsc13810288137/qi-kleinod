@@ -1,17 +1,15 @@
 'use client';
 
-import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/lib/cartStore';
 import { toast } from 'sonner';
+import { createClient } from '@/lib/supabase';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// ... 在组件内部使用：
+const supabase = createClient();
 
 type Product = {
   id: string;
