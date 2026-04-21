@@ -7,10 +7,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/lib/cartStore';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const supabase = createClient();   // ← 这里改成不传参数
 
 type Product = {
   id: string;
@@ -24,7 +21,7 @@ type Product = {
   weight: number | null;
 };
 
-// 搜索相关的客户端组件（使用 useSearchParams）
+// 搜索相关的客户端组件
 function ShopContent() {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get('search')?.toLowerCase() || '';
@@ -38,6 +35,7 @@ function ShopContent() {
     async function fetchProducts() {
       try {
         console.log("开始从 Supabase 获取商品数据... 搜索词:", searchTerm);
+
         const { data, error } = await supabase
           .from('products')
           .select('*')
@@ -107,6 +105,7 @@ function ShopContent() {
                     <span className="text-2xl font-bold text-emerald-600">€{product.price}</span>
                   </div>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
+
                   <button
                     onClick={() => addToCart({
                       id: product.id,
@@ -148,6 +147,7 @@ function ShopContent() {
                     <span className="text-2xl font-bold text-emerald-600">€{product.price}</span>
                   </div>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
+
                   <button
                     onClick={() => addToCart({
                       id: product.id,
@@ -169,7 +169,7 @@ function ShopContent() {
   );
 }
 
-// 主页面组件（Server Component）
+// 主页面（Server Component + Suspense）
 export default function ShopPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-xl">Loading shop...</div>}>
