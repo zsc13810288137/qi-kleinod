@@ -2,9 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);   // ← 去掉 apiVersion，让 Stripe 使用最新版本
 
 export async function GET(request: NextRequest) {
   const sessionId = request.nextUrl.searchParams.get('session_id');
@@ -22,11 +20,7 @@ export async function GET(request: NextRequest) {
       currency: session.currency,
       customer_email: session.customer_details?.email,
       payment_status: session.payment_status,
-      
-      // 直接返回 metadata（这是我们最需要的）
       metadata: session.metadata || {},
-      
-      // 额外返回一些常用信息用于调试
       customer_details: session.customer_details,
     });
 
