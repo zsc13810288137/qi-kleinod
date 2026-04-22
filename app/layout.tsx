@@ -132,15 +132,15 @@ export default function RootLayout({
 
             {/* 手机端展开菜单 */}
             {menuOpen && (
-              <div className="md:hidden mt-4 pt-4 border-t flex flex-col gap-4 text-lg">
-                <Link href="/shop" onClick={() => setMenuOpen(false)} className="hover:text-black">Shop</Link>
-                <Link href="/story" onClick={() => setMenuOpen(false)} className="hover:text-black">Our Story</Link>
-                <Link href="/orders" onClick={() => setMenuOpen(false)} className="hover:text-black">My Orders</Link>
-                <Link href="/contact" onClick={() => setMenuOpen(false)} className="hover:text-black">Contact Us</Link>
+              <div className="md:hidden mt-4 pt-4 border-t flex flex-col gap-4 text-lg text-gray-900">
+                <Link href="/shop" onClick={() => setMenuOpen(false)} className="hover:text-black py-1">Shop</Link>
+                <Link href="/story" onClick={() => setMenuOpen(false)} className="hover:text-black py-1">Our Story</Link>
+                <Link href="/orders" onClick={() => setMenuOpen(false)} className="hover:text-black py-1">My Orders</Link>
+                <Link href="/contact" onClick={() => setMenuOpen(false)} className="hover:text-black py-1">Contact Us</Link>
                 {user ? (
-                  <button onClick={handleLogout} className="text-left hover:text-black">Logout</button>
+                  <button onClick={handleLogout} className="text-left hover:text-black py-1">Logout</button>
                 ) : (
-                  <Link href="/auth/login" onClick={() => setMenuOpen(false)} className="hover:text-black">Sign In</Link>
+                  <Link href="/auth/login" onClick={() => setMenuOpen(false)} className="hover:text-black py-1">Sign In</Link>
                 )}
               </div>
             )}

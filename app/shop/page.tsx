@@ -102,7 +102,7 @@ function ShopContent() {
                 </Link>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-semibold line-clamp-2">{product.name}</h3>
+                    <h3 className="text-xl font-semibold line-clamp-2 text-gray-900">{product.name}</h3>
                     <span className="text-2xl font-bold text-emerald-600">€{product.price}</span>
                   </div>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
@@ -144,7 +144,7 @@ function ShopContent() {
                 </Link>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-semibold line-clamp-2">{product.name}</h3>
+                    <h3 className="text-xl font-semibold line-clamp-2 text-gray-900">{product.name}</h3>
                     <span className="text-2xl font-bold text-emerald-600">€{product.price}</span>
                   </div>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
