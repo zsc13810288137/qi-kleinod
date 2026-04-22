@@ -80,7 +80,7 @@ export default function AdminOrdersPage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-bold">Admin - Orders Management</h1>
+          <h1 className="text-4xl font-bold text-gray-900">Admin - Orders Management</h1>
           <div className="flex items-center gap-6">
             <Link href="/admin" className="text-black hover:underline">← Back to Admin</Link>
             <button 

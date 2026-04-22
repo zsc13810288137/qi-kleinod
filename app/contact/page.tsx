@@ -60,7 +60,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-gray-50 py-16">
       <div className="max-w-2xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
+          <h1 className="text-5xl font-bold mb-4 text-gray-900">Contact Us</h1>
           <p className="text-xl text-gray-600">
             We'd love to hear from you! Send us a message and we'll get back to you soon.
           </p>
@@ -89,7 +89,7 @@ export default function ContactPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-2">Your Name</label>
+              <label className="block text-sm font-medium mb-2 text-gray-900">Your Name</label>
               <input
                 type="text"
                 name="name"
@@ -101,7 +101,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Email Address</label>
+              <label className="block text-sm font-medium mb-2 text-gray-900">Email Address</label>
               <input
                 type="email"
                 name="email"
@@ -113,7 +113,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Subject</label>
+              <label className="block text-sm font-medium mb-2 text-gray-900">Subject</label>
               <input
                 type="text"
                 name="subject"
@@ -125,7 +125,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Message</label>
+              <label className="block text-sm font-medium mb-2 text-gray-900">Message</label>
               <textarea
                 name="message"
                 value={formData.message}

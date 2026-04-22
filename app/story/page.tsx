@@ -8,7 +8,7 @@ export default function OurStoryPage() {
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-4xl">🐨</span>
-          <h1 className="text-5xl font-bold mt-6 mb-4">Our Story</h1>
+          <h1 className="text-5xl font-bold mt-6 mb-4 text-gray-900">Our Story</h1>
           <p className="text-xl text-gray-600">Where koala magic meets everyday elegance</p>
         </div>
 

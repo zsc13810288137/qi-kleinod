@@ -32,7 +32,7 @@ export default function CartPage() {
       <div className="min-h-screen bg-gray-50 py-20">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <div className="text-7xl mb-8">🛒</div>
-          <h2 className="text-4xl font-bold mb-4">Your Cart is Empty</h2>
+          <h2 className="text-4xl font-bold mb-4 text-gray-900">Your Cart is Empty</h2>
           <p className="text-gray-600 mb-10 max-w-md mx-auto">
             Looks like you haven't added any beautiful koala or fox jewelry yet.
           </p>
@@ -90,14 +90,14 @@ export default function CartPage() {
                     <div className="flex items-center border border-gray-300 rounded-2xl">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-100 rounded-l-2xl text-xl font-light"
+                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-700 rounded-l-2xl text-xl font-light"
                       >
                         −
                       </button>
                       <span className="px-8 font-semibold text-lg">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-100 rounded-r-2xl text-xl font-light"
+                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-700 rounded-r-2xl text-xl font-light"
                       >
                         +
                       </button>
@@ -124,7 +124,7 @@ export default function CartPage() {
           {/* 订单摘要 */}
           <div className="lg:col-span-4">
             <div className="bg-white rounded-3xl shadow p-8 sticky top-24">
-              <h3 className="text-xl font-semibold mb-6">Order Summary</h3>
+              <h3 className="text-xl font-semibold mb-6 text-gray-900">Order Summary</h3>
 
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between text-gray-600">
@@ -138,7 +138,7 @@ export default function CartPage() {
               </div>
 
               <div className="border-t pt-6 mb-8">
-                <div className="flex justify-between text-xl font-semibold">
+                <div className="flex justify-between text-xl font-semibold text-gray-900">
                   <span>Total</span>
                   <span>€{totalPrice.toLocaleString()}</span>
                 </div>

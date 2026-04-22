@@ -126,7 +126,7 @@ export default function AdminProductsPage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-bold">Admin - Product Management</h1>
+          <h1 className="text-4xl font-bold text-gray-900">Admin - Product Management</h1>
           <div className="flex gap-6">
             <Link href="/admin" className="text-black hover:underline">← Back to Admin</Link>
             <button 
@@ -195,13 +195,13 @@ export default function AdminProductsPage() {
         {(editingProduct || isAdding) && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-6">
             <div className="bg-white rounded-3xl p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-              <h2 className="text-2xl font-bold mb-6">
+              <h2 className="text-2xl font-bold mb-6  text-gray-900">
                 {isAdding ? 'Add New Product' : 'Edit Product'}
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-2">Product Name *</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900">Product Name *</label>
                   <input
                     type="text"
                     name="name"
@@ -212,7 +212,7 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Price (€) *</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900">Price (€) *</label>
                   <input
                     type="number"
                     name="price"
@@ -223,7 +223,7 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Stock *</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900">Stock *</label>
                   <input
                     type="number"
                     name="stock"
@@ -234,7 +234,7 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-2">Description</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900">Description</label>
                   <textarea
                     name="description"
                     value={formData.description || ''}
@@ -245,7 +245,7 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Category</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900">Category</label>
                   <input
                     type="text"
                     name="category"
@@ -256,7 +256,7 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Material</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900">Material</label>
                   <input
                     type="text"
                     name="material"
@@ -267,7 +267,7 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Weight (g)</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900">Weight (g)</label>
                   <input
                     type="number"
                     name="weight"

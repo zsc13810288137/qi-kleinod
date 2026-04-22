@@ -76,7 +76,7 @@ export default function AdminContactsPage() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-bold">Admin - Contact Messages</h1>
+          <h1 className="text-4xl font-bold text-gray-900">Admin - Contact Messages</h1>
           <div className="flex gap-6">
             <Link href="/admin" className="text-black hover:underline">← Back to Admin</Link>
             <button onClick={() => {
@@ -91,7 +91,7 @@ export default function AdminContactsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* 留言列表 */}
           <div className="bg-white rounded-3xl shadow p-6">
-            <h2 className="text-2xl font-semibold mb-6">All Messages ({contacts.length})</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900">All Messages ({contacts.length})</h2>
             {contacts.length === 0 ? (
               <p className="text-gray-500 py-10 text-center">No messages yet.</p>
             ) : (

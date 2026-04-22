@@ -105,27 +105,27 @@ export default function OrdersPage() {
                       <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${statusInfo.color}`}>
                         {statusInfo.label}
                       </span>
-                      <p className="text-3xl font-bold mt-3">€{order.total_amount?.toLocaleString() || '0'}</p>
+                      <p className="text-3xl font-bold mt-3 text-gray-900">€{order.total_amount?.toLocaleString() || '0'}</p>
                     </div>
                   </div>
 
                   {/* 收货地址 */}
                   {order.shipping_fullname && (
-                    <div className="mb-8 p-5 bg-gray-50 rounded-2xl">
+                    <div className="mb-8 p-5 bg-gray-50 rounded-2xl text-gray-600">
                       <p className="font-medium mb-2">Shipping Address</p>
                       <p className="font-semibold">{order.shipping_fullname}</p>
                       <p>{order.shipping_address}</p>
                       <p>{order.shipping_city}, {order.shipping_postalcode}</p>
                       <p>{order.shipping_country}</p>
                       {order.shipping_phone && <p>Phone: {order.shipping_phone}</p>}
-                      <p className="text-sm text-gray-600 mt-1">{order.shipping_email}</p>
+                      <p className="text-sm mt-1">{order.shipping_email}</p>
                     </div>
                   )}
 
                   {/* 商品列表 */}
                   {order.items && order.items.length > 0 && (
                     <div>
-                      <p className="font-medium mb-4">Items Purchased</p>
+                      <p className="font-medium mb-4 text-gray-900">Items Purchased</p>
                       <div className="space-y-4">
                         {order.items.map((item: any, index: number) => (
                           <div key={index} className="flex justify-between items-center border-b pb-4 last:border-b-0">

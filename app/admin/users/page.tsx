@@ -75,7 +75,7 @@ export default function AdminUsersPage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-bold">Admin - User Management</h1>
+          <h1 className="text-4xl font-bold text-gray-900">Admin - User Management</h1>
           <div className="flex gap-6">
             <Link href="/admin" className="text-black hover:underline">← Back to Admin</Link>
             <button 
@@ -94,11 +94,11 @@ export default function AdminUsersPage() {
           <table className="w-full">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-4 text-left">Email</th>
-                <th className="px-6 py-4 text-left">Registered</th>
-                <th className="px-6 py-4 text-left">Last Login</th>
-                <th className="px-6 py-4 text-center">Orders</th>
-                <th className="px-6 py-4 text-center">Actions</th>
+                <th className="px-6 py-4 text-left text-gray-900">Email</th>
+                <th className="px-6 py-4 text-left text-gray-900">Registered</th>
+                <th className="px-6 py-4 text-left text-gray-900">Last Login</th>
+                <th className="px-6 py-4 text-center text-gray-900">Orders</th>
+                <th className="px-6 py-4 text-center text-gray-900">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">

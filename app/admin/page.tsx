@@ -75,14 +75,14 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-md">
-          <h1 className="text-3xl font-bold text-center mb-8">Admin Portal</h1>
+          <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">Admin Portal</h1>
 
           {hashLoading ? (
             <p className="text-center py-8">Loading security configuration...</p>
           ) : (
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Admin Password</label>
+                <label className="block text-sm font-medium mb-2 text-gray-900">Admin Password</label>
                 <input
                   type="password"
                   value={inputPassword}
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
       <div className="max-w-5xl mx-auto px-6">
         <div className="flex justify-between items-center mb-12">
           <div>
-            <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+            <h1 className="text-4xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600 mt-2">Manage your Qi-Kleinod store</p>
           </div>
           <button
@@ -131,7 +131,7 @@ export default function AdminDashboard() {
           <Link href="/admin/contacts" className="group">
             <div className="bg-white rounded-3xl shadow p-10 hover:shadow-xl transition-all h-full flex flex-col">
               <div className="text-6xl mb-6">✉️</div>
-              <h2 className="text-2xl font-semibold mb-3">Contact Messages</h2>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Contact Messages</h2>
               <p className="text-gray-600 flex-1">View and reply to customer inquiries</p>
               <div className="mt-6 text-black group-hover:underline">Go to Contacts →</div>
             </div>
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
           <Link href="/admin/orders" className="group">
             <div className="bg-white rounded-3xl shadow p-10 hover:shadow-xl transition-all h-full flex flex-col">
               <div className="text-6xl mb-6">📦</div>
-              <h2 className="text-2xl font-semibold mb-3">Orders Management</h2>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Orders Management</h2>
               <p className="text-gray-600 flex-1">View orders and update shipping status</p>
               <div className="mt-6 text-black group-hover:underline">Go to Orders →</div>
             </div>
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
           <Link href="/admin/users" className="group">
             <div className="bg-white rounded-3xl shadow p-10 hover:shadow-xl transition-all h-full flex flex-col">
               <div className="text-6xl mb-6">👥</div>
-              <h2 className="text-2xl font-semibold mb-3">User Management</h2>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">User Management</h2>
               <p className="text-gray-600 flex-1">Manage registered users and permissions</p>
               <div className="mt-6 text-black group-hover:underline">Go to Users →</div>
             </div>
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
           <Link href="/admin/products" className="group">
             <div className="bg-white rounded-3xl shadow p-10 hover:shadow-xl transition-all h-full flex flex-col">
               <div className="text-6xl mb-6">🛍️</div>
-              <h2 className="text-2xl font-semibold mb-3">Product Management</h2>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Product Management</h2>
               <p className="text-gray-600 flex-1">Add, edit and manage all products</p>
               <div className="mt-6 text-black group-hover:underline">Go to Products →</div>
             </div>

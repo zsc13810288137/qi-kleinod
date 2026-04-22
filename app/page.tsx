@@ -141,7 +141,7 @@ export default function HomePage() {
                 </Link>
 
                 <div className="p-6">
-                  <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
+                  <h3 className="font-semibold text-lg mb-1 text-gray-900">{product.name}</h3>
                   <p className="text-emerald-600 font-bold text-xl mb-4">
                     €{product.price}
                   </p>
