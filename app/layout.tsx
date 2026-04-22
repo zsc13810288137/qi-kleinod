@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'sonner';
 import './globals.css';
 import CookieConsent from '@/components/CookieConsent';
-import { Analytics } from '@vercel/analytics/react';   // 新增：Vercel Analytics
+import { Analytics } from '@vercel/analytics/react';
 
 export default function RootLayout({
   children,
@@ -176,29 +176,56 @@ export default function RootLayout({
         {/* Vercel Analytics */}
         <Analytics />
 
-        {/* Footer - 四等分布局，法律链接放在最右边垂直排列 */}
-        <footer className="bg-white border-t py-10 mt-12">
+        {/* Footer - 四栏布局（借鉴模板风格 + 法律链接） */}
+        <footer className="bg-gray-900 text-gray-300 py-16 mt-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
               
-              {/* 第一列：版权信息 */}
+              {/* 第一栏：Need Help */}
               <div>
-                <p className="text-gray-500">© 2026 Qi-Kleinod. All rights reserved.</p>
+                <h3 className="text-white font-semibold text-lg mb-6">NEED HELP</h3>
+                <div className="space-y-3 text-sm">
+                  <Link href="/size-guide" className="hover:text-white transition block">Size guide</Link>
+                  <Link href="/shipping-returns" className="hover:text-white transition block">Shipping & returns</Link>
+                  <Link href="/faq" className="hover:text-white transition block">FAQ</Link>
+                </div>
               </div>
 
-              {/* 第二列：留空 */}
-              <div></div>
-
-              {/* 第三列：留空 */}
-              <div></div>
-
-              {/* 第四列：法律链接（垂直排列，左对齐） */}
-              <div className="flex flex-col gap-3 text-gray-600">
-                <Link href="/impressum" className="hover:text-gray-900 transition">Impressum</Link>
-                <Link href="/datenschutz" className="hover:text-gray-900 transition">Datenschutzerklärung</Link>
-                <Link href="/agb" className="hover:text-gray-900 transition">AGB</Link>
-                <Link href="/widerruf" className="hover:text-gray-900 transition">Widerrufsbelehrung</Link>
+              {/* 第二栏：Contact Us */}
+              <div>
+                <h3 className="text-white font-semibold text-lg mb-6">CONTACT US</h3>
+                <div className="space-y-3 text-sm">
+                  <p>Monday–Saturday: 10am–6pm (CET)</p>
+                  <p>Phone: +49 1575 1330668</p>
+                  <p>Email: kontakt@qi-kleinod.de</p>
+                  <Link href="/career" className="hover:text-white transition block text-sm font-medium">Career</Link>
+                </div>
               </div>
+
+              {/* 第三栏：Book an Appointment */}
+              <div>
+                <h3 className="text-white font-semibold text-lg mb-6">BOOK AN APPOINTMENT</h3>
+                <div className="space-y-3 text-sm">
+                  <Link href="/appointment" className="hover:text-white transition block">Prepare my in-store visit</Link>
+                  <Link href="/boutiques" className="hover:text-white transition block">Find my boutique</Link>
+                </div>
+              </div>
+
+              {/* 第四栏：法律链接（垂直排列，左对齐） */}
+              <div>
+                <h3 className="text-white font-semibold text-lg mb-6">LEGAL</h3>
+                <div className="flex flex-col gap-3 text-sm text-gray-400">
+                  <Link href="/impressum" className="hover:text-white transition">Impressum</Link>
+                  <Link href="/datenschutz" className="hover:text-white transition">Datenschutzerklärung</Link>
+                  <Link href="/agb" className="hover:text-white transition">AGB</Link>
+                  <Link href="/widerruf" className="hover:text-white transition">Widerrufsbelehrung</Link>
+                </div>
+              </div>
+            </div>
+
+            {/* 底部版权 */}
+            <div className="mt-16 pt-8 border-t border-gray-700 text-center text-xs text-gray-500">
+              © 2026 Qi-Kleinod. All rights reserved.
             </div>
           </div>
         </footer>
