@@ -16,7 +16,6 @@ export default function RootLayout({
   const [user, setUser] = useState<any>(null);
   const supabase = createClient();
 
-  // 使用客户端渲染安全的 totalItems
   const [totalItems, setTotalItems] = useState(0);
   const addToCart = useCartStore((state) => state.addToCart);
 
@@ -24,16 +23,14 @@ export default function RootLayout({
 
   const [searchTerm, setSearchTerm] = useState('');
   const [addAnimation, setAddAnimation] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);   // 新增：控制手机菜单
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // 同步购物车数量
   useEffect(() => {
     const unsubscribe = useCartStore.subscribe(
       (state) => setTotalItems(state.getTotalItems?.() || 0)
     );
-    // 初始化
     setTotalItems(useCartStore.getState().getTotalItems?.() || 0);
-
     return unsubscribe;
   }, []);
 
@@ -82,8 +79,23 @@ export default function RootLayout({
         <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
+              
               {/* Logo */}
               <Link href="/" className="text-2xl font-bold text-gray-900">Qi-Kleinod</Link>
+
+              {/* 搜索框 - PC端显示 */}
+              <div className="flex-1 max-w-xl mx-6 hidden md:block">
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search jewelry, earrings, necklaces..."
+                    className="w-full bg-gray-100 border border-gray-200 rounded-2xl py-3 px-5 pl-12 text-sm focus:outline-none focus:border-black transition"
+                  />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                </form>
+              </div>
 
               {/* 手机端汉堡菜单按钮 */}
               <button 
@@ -93,41 +105,46 @@ export default function RootLayout({
                 {menuOpen ? '✕' : '☰'}
               </button>
 
-              {/* 桌面端导航 */}
+              {/* 桌面端导航 + 购物车 */}
               <div className="hidden md:flex items-center gap-8 text-sm font-medium">
                 <Link href="/shop" className="hover:text-black transition">Shop</Link>
                 <Link href="/story" className="hover:text-black transition">Our Story</Link>
-                <Link href="/orders" className="hover:text-black transition">Orders</Link>
-                <Link href="/contact" className="hover:text-black transition">Contact</Link>
+                <Link href="/orders" className="hover:text-black transition">My Orders</Link>
+                <Link href="/contact" className="hover:text-black transition">Contact Us</Link>
               </div>
 
-              {/* 购物车 + 用户 */}
-              <div className="flex items-center gap-4 md:gap-6">
-                <Link href="/cart" className="relative flex items-center gap-1 text-gray-700 hover:text-black transition">
-                  <span className="text-2xl">🛒</span>
-                  {addAnimation && (
-                    <span className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full animate-bounce">
-                      +1
-                    </span>
-                  )}
-                  {totalItems > 0 && (
-                    <span 
-                      className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full"
-                      suppressHydrationWarning
-                    >
-                      {totalItems}
-                    </span>
-                  )}
-                </Link>
+              {/* 购物车 */}
+              <Link href="/cart" className="relative flex items-center gap-2 text-gray-700 hover:text-black transition md:ml-4">
+                <span className="text-2xl">🛒</span>
+                <span className="text-sm font-medium hidden md:inline">Cart</span>
 
-                {user ? (
-                  <button onClick={handleLogout} className="text-sm text-gray-600 hover:text-black hidden md:block">
-                    Logout
-                  </button>
-                ) : (
-                  <Link href="/auth/login" className="text-sm text-gray-600 hover:text-black hidden md:block">Sign In</Link>
+                {addAnimation && (
+                  <span className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full animate-bounce">
+                    +1
+                  </span>
                 )}
-              </div>
+
+                {totalItems > 0 && (
+                  <span 
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full"
+                    suppressHydrationWarning
+                  >
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+
+              {/* 用户区域 */}
+              {user ? (
+                <button 
+                  onClick={handleLogout}
+                  className="text-sm text-gray-600 hover:text-black hidden md:block"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link href="/auth/login" className="text-sm text-gray-600 hover:text-black hidden md:block">Sign In</Link>
+              )}
             </div>
 
             {/* 手机端展开菜单 */}
@@ -147,7 +164,7 @@ export default function RootLayout({
           </div>
         </nav>
 
-        <main className="pb-12">{children}</main>
+        <main>{children}</main>
 
         <Toaster position="top-center" richColors closeButton />
 
