@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'sonner';
 import './globals.css';
+import CookieConsent from '@/components/CookieConsent';
+import { Analytics } from '@vercel/analytics/react';   // 新增：Vercel Analytics
 
 export default function RootLayout({
   children,
@@ -36,7 +38,7 @@ export default function RootLayout({
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } } = await supabase.auth.getUser();
       setUser(user);
     };
 
@@ -105,7 +107,7 @@ export default function RootLayout({
                 {menuOpen ? '✕' : '☰'}
               </button>
 
-              {/* 桌面端导航 + 购物车 */}
+              {/* 桌面端导航 */}
               <div className="hidden md:flex items-center gap-8 text-sm font-medium">
                 <Link href="/shop" className="hover:text-black transition">Shop</Link>
                 <Link href="/story" className="hover:text-black transition">Our Story</Link>
@@ -167,6 +169,39 @@ export default function RootLayout({
         <main>{children}</main>
 
         <Toaster position="top-center" richColors closeButton />
+
+        {/* Cookie Consent Banner */}
+        <CookieConsent />
+
+        {/* Vercel Analytics */}
+        <Analytics />
+
+        {/* Footer - 四等分布局，法律链接放在最右边垂直排列 */}
+        <footer className="bg-white border-t py-10 mt-12">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+              
+              {/* 第一列：版权信息 */}
+              <div>
+                <p className="text-gray-500">© 2026 Qi-Kleinod. All rights reserved.</p>
+              </div>
+
+              {/* 第二列：留空 */}
+              <div></div>
+
+              {/* 第三列：留空 */}
+              <div></div>
+
+              {/* 第四列：法律链接（垂直排列，左对齐） */}
+              <div className="flex flex-col gap-3 text-gray-600">
+                <Link href="/impressum" className="hover:text-gray-900 transition">Impressum</Link>
+                <Link href="/datenschutz" className="hover:text-gray-900 transition">Datenschutzerklärung</Link>
+                <Link href="/agb" className="hover:text-gray-900 transition">AGB</Link>
+                <Link href="/widerruf" className="hover:text-gray-900 transition">Widerrufsbelehrung</Link>
+              </div>
+            </div>
+          </div>
+        </footer>
 
         <div className="fixed bottom-6 right-6 z-50">
           <Link href="/admin" className="text-xs text-gray-400 hover:text-gray-600 transition flex items-center gap-1.5 opacity-60 hover:opacity-100">
