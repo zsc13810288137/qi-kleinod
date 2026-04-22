@@ -24,9 +24,8 @@ export default function RootLayout({
 
   const [searchTerm, setSearchTerm] = useState('');
   const [addAnimation, setAddAnimation] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);   // 新增：控制手机菜单
 
-  // 同步购物车数量
+  // 同步 Zustand 的 totalItems 到本地 state，避免 hydration mismatch
   useEffect(() => {
     const unsubscribe = useCartStore.subscribe(
       (state) => setTotalItems(state.getTotalItems?.() || 0)
@@ -52,6 +51,7 @@ export default function RootLayout({
     return () => subscription.unsubscribe();
   }, []);
 
+  // +1 动画监听
   useEffect(() => {
     const handleAddEvent = () => {
       setAddAnimation(true);
@@ -65,7 +65,6 @@ export default function RootLayout({
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = '/shop';
-    setMenuOpen(false);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -82,27 +81,33 @@ export default function RootLayout({
         <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
+              
               {/* Logo */}
-              <Link href="/" className="text-2xl font-bold text-gray-900">Qi-Kleinod</Link>
+              <Link href="/" className="text-2xl font-bold text-gray-900">
+                Qi-Kleinod
+              </Link>
 
-              {/* 手机端汉堡菜单按钮 */}
-              <button 
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden text-2xl text-gray-700"
-              >
-                {menuOpen ? '✕' : '☰'}
-              </button>
-
-              {/* 桌面端导航 */}
-              <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-                <Link href="/shop" className="hover:text-black transition">Shop</Link>
-                <Link href="/story" className="hover:text-black transition">Our Story</Link>
-                <Link href="/orders" className="hover:text-black transition">Orders</Link>
-                <Link href="/contact" className="hover:text-black transition">Contact</Link>
+              {/* 搜索框 - 手机上隐藏，平板以上显示 */}
+              <div className="flex-1 max-w-md mx-4 hidden md:block">
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search jewelry..."
+                    className="w-full bg-gray-100 border border-gray-200 rounded-2xl py-2.5 px-5 pl-12 text-sm focus:outline-none focus:border-black"
+                  />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                </form>
               </div>
 
-              {/* 购物车 + 用户 */}
-              <div className="flex items-center gap-4 md:gap-6">
+              {/* 右侧菜单 */}
+              <div className="flex items-center gap-4 md:gap-6 text-sm font-medium">
+                <Link href="/shop" className="hidden md:block hover:text-black transition">Shop</Link>
+                <Link href="/story" className="hidden md:block hover:text-black transition">Our Story</Link>
+                <Link href="/orders" className="hover:text-black transition">Orders</Link>
+
+                {/* 购物车 */}
                 <Link href="/cart" className="relative flex items-center gap-1 text-gray-700 hover:text-black transition">
                   <span className="text-2xl">🛒</span>
                   {addAnimation && (
@@ -121,29 +126,19 @@ export default function RootLayout({
                 </Link>
 
                 {user ? (
-                  <button onClick={handleLogout} className="text-sm text-gray-600 hover:text-black hidden md:block">
+                  <button 
+                    onClick={handleLogout}
+                    className="text-sm text-gray-600 hover:text-black"
+                  >
                     Logout
                   </button>
                 ) : (
-                  <Link href="/auth/login" className="text-sm text-gray-600 hover:text-black hidden md:block">Sign In</Link>
+                  <Link href="/auth/login" className="text-sm text-gray-600 hover:text-black">Sign In</Link>
                 )}
+
+                <Link href="/contact" className="text-sm text-gray-600 hover:text-black">Contact</Link>
               </div>
             </div>
-
-            {/* 手机端展开菜单 */}
-            {menuOpen && (
-              <div className="md:hidden mt-4 pt-4 border-t flex flex-col gap-4 text-lg">
-                <Link href="/shop" onClick={() => setMenuOpen(false)} className="hover:text-black">Shop</Link>
-                <Link href="/story" onClick={() => setMenuOpen(false)} className="hover:text-black">Our Story</Link>
-                <Link href="/orders" onClick={() => setMenuOpen(false)} className="hover:text-black">My Orders</Link>
-                <Link href="/contact" onClick={() => setMenuOpen(false)} className="hover:text-black">Contact Us</Link>
-                {user ? (
-                  <button onClick={handleLogout} className="text-left hover:text-black">Logout</button>
-                ) : (
-                  <Link href="/auth/login" onClick={() => setMenuOpen(false)} className="hover:text-black">Sign In</Link>
-                )}
-              </div>
-            )}
           </div>
         </nav>
 

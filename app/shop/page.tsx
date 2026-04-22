@@ -97,7 +97,7 @@ function ShopContent() {
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="h-full flex items-center justify-center text-gray-400">No Image</div>
+                    <div className="h-full flex items-center justify-center text-gray-900">No Image</div>
                   )}
                 </Link>
                 <div className="p-6">
@@ -139,7 +139,7 @@ function ShopContent() {
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="h-full flex items-center justify-center text-gray-400">No Image</div>
+                    <div className="h-full flex items-center justify-center text-gray-900">No Image</div>
                   )}
                 </Link>
                 <div className="p-6">
