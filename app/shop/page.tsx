@@ -8,7 +8,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/lib/cartStore';
 export const dynamic = 'force-dynamic';
 
-const supabase = createClient();   // ← 这里改成不传参数
+const supabase = createClient();
 
 type Product = {
   id: string;
@@ -76,16 +76,16 @@ function ShopContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-6">
-        <h1 className="text-4xl font-bold text-center mb-4">Our Collection</h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <h1 className="text-4xl font-bold text-center mb-4 text-gray-900">Our Collection</h1>
         <p className="text-gray-600 text-center mb-12">
           Discover our adorable koala-inspired and fox-themed jewelry
         </p>
 
         {/* Koala Collection */}
         <div className="mb-16">
-          <h2 className="text-3xl font-semibold mb-8 text-center">Koala Collection</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <h2 className="text-3xl font-semibold mb-8 text-center text-gray-900">Koala Collection</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {products.filter(p => !p.name.toLowerCase().includes('fox')).map((product) => (
               <div key={product.id} className="bg-white rounded-3xl shadow-lg overflow-hidden group">
                 <Link href={`/shop/${product.id}`} className="block relative h-80 bg-gray-100">
@@ -126,8 +126,8 @@ function ShopContent() {
 
         {/* Fox Collection */}
         <div>
-          <h2 className="text-3xl font-semibold mb-8 text-center">Fox Collection</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <h2 className="text-3xl font-semibold mb-8 text-center text-gray-900">Fox Collection</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {products.filter(p => p.name.toLowerCase().includes('fox')).map((product) => (
               <div key={product.id} className="bg-white rounded-3xl shadow-lg overflow-hidden group">
                 <Link href={`/shop/${product.id}`} className="block relative h-80 bg-gray-100">

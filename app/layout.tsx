@@ -79,80 +79,70 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-gray-50">
         <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-            
-            {/* 左侧 */}
-            <div className="flex items-center gap-10">
-              <Link href="/" className="text-2xl font-bold text-gray-900">Qi-Kleinod</Link>
-              <div className="flex items-center gap-8 text-sm font-medium">
-                <Link href="/shop" className="hover:text-black transition">Shop</Link>
-                <Link href="/story" className="hover:text-black transition">Our Story</Link>
-              </div>
-            </div>
-
-            {/* 搜索 */}
-            <div className="flex-1 max-w-xl mx-12">
-              <form onSubmit={handleSearch} className="relative">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search jewelry, earrings, necklaces..."
-                  className="w-full bg-gray-100 border border-gray-200 rounded-2xl py-3 px-5 pl-12 text-sm focus:outline-none focus:border-black transition"
-                />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-              </form>
-            </div>
-
-            {/* 右侧 */}
-            <div className="flex items-center gap-8">
-              <Link href="/orders" className="text-sm font-medium hover:text-black transition">My Orders</Link>
-
-              {/* 购物车 */}
-              <Link href="/cart" className="relative flex items-center gap-2 text-gray-700 hover:text-black transition">
-                <span className="text-2xl">🛒</span>
-                <span className="text-sm font-medium">Cart</span>
-
-                {addAnimation && (
-                  <span className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full animate-bounce">
-                    +1
-                  </span>
-                )}
-
-                {/* 最终修复：使用本地 state + suppressHydrationWarning */}
-                {totalItems > 0 && (
-                  <span 
-                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full"
-                    suppressHydrationWarning
-                  >
-                    {totalItems}
-                  </span>
-                )}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <div className="flex items-center justify-between">
+              
+              {/* Logo */}
+              <Link href="/" className="text-2xl font-bold text-gray-900">
+                Qi-Kleinod
               </Link>
 
-              {user ? (
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-600 hidden md:block">{user.email}</span>
+              {/* 搜索框 - 手机上隐藏，平板以上显示 */}
+              <div className="flex-1 max-w-md mx-4 hidden md:block">
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search jewelry..."
+                    className="w-full bg-gray-100 border border-gray-200 rounded-2xl py-2.5 px-5 pl-12 text-sm focus:outline-none focus:border-black"
+                  />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                </form>
+              </div>
+
+              {/* 右侧菜单 */}
+              <div className="flex items-center gap-4 md:gap-6 text-sm font-medium">
+                <Link href="/shop" className="hidden md:block hover:text-black transition">Shop</Link>
+                <Link href="/story" className="hidden md:block hover:text-black transition">Our Story</Link>
+                <Link href="/orders" className="hover:text-black transition">Orders</Link>
+
+                {/* 购物车 */}
+                <Link href="/cart" className="relative flex items-center gap-1 text-gray-700 hover:text-black transition">
+                  <span className="text-2xl">🛒</span>
+                  {addAnimation && (
+                    <span className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full animate-bounce">
+                      +1
+                    </span>
+                  )}
+                  {totalItems > 0 && (
+                    <span 
+                      className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full"
+                      suppressHydrationWarning
+                    >
+                      {totalItems}
+                    </span>
+                  )}
+                </Link>
+
+                {user ? (
                   <button 
                     onClick={handleLogout}
-                    className="px-5 py-2 text-sm border border-gray-300 rounded-2xl hover:bg-gray-100 transition"
+                    className="text-sm text-gray-600 hover:text-black"
                   >
                     Logout
                   </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <Link href="/auth/login" className="px-6 py-2.5 text-sm font-medium hover:bg-gray-100 rounded-2xl transition">Sign In</Link>
-                  <Link href="/auth/register" className="px-6 py-2.5 bg-black text-white text-sm font-medium rounded-2xl hover:bg-gray-800 transition">Register</Link>
-                </div>
-              )}
+                ) : (
+                  <Link href="/auth/login" className="text-sm text-gray-600 hover:text-black">Sign In</Link>
+                )}
 
-              <Link href="/contact" className="text-sm font-medium hover:text-black transition">Contact Us</Link>
+                <Link href="/contact" className="text-sm text-gray-600 hover:text-black">Contact</Link>
+              </div>
             </div>
           </div>
         </nav>
 
-        <main>{children}</main>
+        <main className="pb-12">{children}</main>
 
         <Toaster position="top-center" richColors closeButton />
 
