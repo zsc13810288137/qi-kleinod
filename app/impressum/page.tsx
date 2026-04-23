@@ -2,11 +2,11 @@
 export default function ImpressumPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-3xl mx-auto px-6">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <h1 className="text-4xl font-bold mb-8 text-gray-900">Impressum</h1>
         
-        <div className="prose prose-gray max-w-none bg-white p-8 rounded-3xl shadow-sm">
-          <pre className="whitespace-pre-wrap text-sm leading-relaxed">
+        <div className="prose prose-gray max-w-none bg-white p-8 rounded-3xl shadow-sm text-gray-900">
+          <pre className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800">
 {`Impressum
 
 Angaben gemäß § 5 TMG
