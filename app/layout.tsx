@@ -182,7 +182,7 @@ export default function RootLayout({
         {/* Vercel Analytics */}
         <Analytics />
 
-        {/* Footer - 四栏布局（借鉴模板风格 + 法律链接） */}
+        {/* Footer - 四栏布局（LEGAL栏颜色已统一） */}
         <footer className="bg-gray-900 text-gray-300 py-16 mt-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
@@ -204,7 +204,7 @@ export default function RootLayout({
                   <p>Monday–Saturday: 10am–6pm (CET)</p>
                   <p>Phone: +49 1575 1330668</p>
                   <p>Email: kontakt@qi-kleinod.de</p>
-                  <Link href="/career" className="hover:text-white transition block text-sm font-medium">Career</Link>
+                  <Link href="/career" className="hover:text-white transition block">Career</Link>
                 </div>
               </div>
 
@@ -212,19 +212,19 @@ export default function RootLayout({
               <div>
                 <h3 className="text-white font-semibold text-lg mb-6">BOOK AN APPOINTMENT</h3>
                 <div className="space-y-3 text-sm">
-                  <Link href="/appointment" className="hover:text-white transition block">Prepare my in-store visit</Link>
+                  <Link href="/book" className="hover:text-white transition block">Prepare my in-store visit</Link>
                   <Link href="/boutiques" className="hover:text-white transition block">Find my boutique</Link>
                 </div>
               </div>
 
-              {/* 第四栏：法律链接（垂直排列，左对齐） */}
+              {/* 第四栏：LEGAL（颜色已统一） */}
               <div>
                 <h3 className="text-white font-semibold text-lg mb-6">LEGAL</h3>
-                <div className="flex flex-col gap-3 text-sm text-gray-400">
-                  <Link href="/impressum" className="hover:text-white transition">Impressum</Link>
-                  <Link href="/datenschutz" className="hover:text-white transition">Datenschutzerklärung</Link>
-                  <Link href="/agb" className="hover:text-white transition">AGB</Link>
-                  <Link href="/widerruf" className="hover:text-white transition">Widerrufsbelehrung</Link>
+                <div className="flex flex-col gap-3 text-sm">
+                  <Link href="/impressum" className="hover:text-white transition text-gray-300">Impressum</Link>
+                  <Link href="/datenschutz" className="hover:text-white transition text-gray-300">Datenschutzerklärung</Link>
+                  <Link href="/agb" className="hover:text-white transition text-gray-300">AGB</Link>
+                  <Link href="/widerruf" className="hover:text-white transition text-gray-300">Widerrufsbelehrung</Link>
                 </div>
               </div>
             </div>
