@@ -202,8 +202,9 @@ export default function RootLayout({
                 <h3 className="text-white font-semibold text-lg mb-6">CONTACT US</h3>
                 <div className="space-y-3 text-sm">
                   <p>Monday–Saturday: 10am–6pm (CET)</p>
-                  <p>Phone: +49 1575 1330668</p>
-                  <p>Email: kontakt@qi-kleinod.de</p>
+                  <p>Phone: +49 6131 213935</p>
+                  <p>Mobile phone: +49 1575 1330668</p>
+                  <p>Email: contact@qi-kleinod.com</p>
                   <Link href="/career" className="hover:text-white transition block">Career</Link>
                 </div>
               </div>
