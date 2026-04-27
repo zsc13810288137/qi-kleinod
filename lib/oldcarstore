@@ -7,19 +7,11 @@ type CartItem = {
   price: number;
   image: string;
   quantity: number;
-  stock?: number;           // ← 新增：保存商品库存
 };
 
 type CartStore = {
   items: CartItem[];
-  addToCart: (product: { 
-    id: string; 
-    name: string; 
-    price: number; 
-    image: string; 
-    stock?: number 
-  }) => void;
-  
+  addToCart: (product: { id: string; name: string; price: number; image: string }) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -35,23 +27,12 @@ export const useCartStore = create<CartStore>()(
       addToCart: (product) => {
         const currentItems = get().items;
         const existingItem = currentItems.find(item => item.id === product.id);
-        const currentQty = existingItem?.quantity || 0;
-        const newQty = currentQty + 1;
-        const availableStock = product.stock ?? 9999;
-
-        // 库存检查
-        if (newQty > availableStock) {
-          window.dispatchEvent(new CustomEvent('stockLimit', {
-            detail: { name: product.name, stock: availableStock }
-          }));
-          return; // 阻止添加
-        }
 
         if (existingItem) {
           set({
             items: currentItems.map(item =>
               item.id === product.id
-                ? { ...item, quantity: newQty }
+                ? { ...item, quantity: item.quantity + 1 }
                 : item
             )
           });
@@ -70,17 +51,6 @@ export const useCartStore = create<CartStore>()(
 
       updateQuantity: (id, quantity) => {
         if (quantity < 1) return;
-
-        const item = get().items.find(i => i.id === id);
-        const availableStock = item?.stock ?? 9999;
-
-        if (quantity > availableStock) {
-          window.dispatchEvent(new CustomEvent('stockLimit', {
-            detail: { name: item?.name || 'Product', stock: availableStock }
-          }));
-          return;
-        }
-
         set({
           items: get().items.map(item =>
             item.id === id ? { ...item, quantity } : item

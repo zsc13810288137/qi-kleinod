@@ -28,13 +28,11 @@ export default function CartPage() {
     router.push('/checkout');
   };
 
-  // 带库存限制的数量更新（已优化）
-  const handleUpdateQuantity = (id: string, newQuantity: number) => {
+  // 新增：带库存限制的数量更新
+  const handleUpdateQuantity = (id: string, newQuantity: number, currentStock?: number) => {
     if (newQuantity < 1) return;
-
-    const item = items.find(i => i.id === id);
-    const currentStock = (item as any)?.stock;
-
+    
+    // 如果有库存信息，进行限制检查
     if (currentStock !== undefined && newQuantity > currentStock) {
       toast.error(`Only ${currentStock} available in stock`);
       return;
@@ -112,7 +110,7 @@ export default function CartPage() {
                       </button>
                       <span className="px-8 font-semibold text-lg">{item.quantity}</span>
                       <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1, (item as any).stock)}
                         className="w-11 h-11 flex items-center justify-center hover:bg-gray-700 rounded-r-2xl text-xl font-light"
                       >
                         +

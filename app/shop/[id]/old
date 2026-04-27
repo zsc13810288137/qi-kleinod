@@ -32,58 +32,25 @@ export default function ProductDetailPage() {
 
   const addToCart = useCartStore((state) => state.addToCart);
 
-  // 获取商品数据
-  const fetchProduct = async (id: string) => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      console.error("查询失败:", error);
-    } else {
-      setProduct(data);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
     const id = params.id as string;
-    if (id) {
-      fetchProduct(id);
-    } else {
+    console.log("详情页接收到的 ID:", id);
+
+    async function fetchProduct() {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) console.error("查询失败:", error);
+      else setProduct(data);
       setLoading(false);
     }
+
+    if (id) fetchProduct();
+    else setLoading(false);
   }, [params.id]);
-
-  // ==================== 实时库存更新 ====================
-  useEffect(() => {
-    const id = params.id as string;
-    if (!id) return;
-
-    const channel = supabase
-      .channel(`product-${id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'products',
-          filter: `id=eq.${id}`,
-        },
-        (payload) => {
-          console.log('商品库存实时更新:', payload.new);
-          setProduct(payload.new as Product);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [params.id]);
-  // ====================================================
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -98,7 +65,7 @@ export default function ProductDetailPage() {
       name: product.name,
       price: product.price,
       image: product.images?.[0] || '',
-      stock: product.stock,
+      stock: product.stock,          // ← 必须传递
     });
 
     // 显示 Toast

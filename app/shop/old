@@ -25,8 +25,12 @@ type Product = {
 
 // 库存指示器（已改名，避免与详情页冲突）
 function ShopStockIndicator({ stock }: { stock: number }) {
-  if (stock <= 0) return <span className="text-red-600 text-sm font-medium">Out of Stock</span>;
-  if (stock <= 3) return <span className="text-orange-600 text-sm font-medium">Only {stock} left</span>;
+  if (stock <= 0) {
+    return <span className="text-red-600 text-sm font-medium">Out of Stock</span>;
+  }
+  if (stock <= 3) {
+    return <span className="text-orange-600 text-sm font-medium">Only {stock} left</span>;
+  }
   return <span className="text-emerald-600 text-sm font-medium">In Stock ({stock})</span>;
 }
 
@@ -40,41 +44,42 @@ function ShopContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 获取商品
-  const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) console.error(error);
-    else setProducts(data || []);
-    setLoading(false);
-  };
-
-  // 初始加载
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    async function fetchProducts() {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-  // 实时订阅库存变化
-  useEffect(() => {
-    const channel = supabase
-      .channel('products-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
-        (payload) => {
-          console.log('库存实时更新:', payload);
-          fetchProducts(); // 自动刷新列表
+        if (error) {
+          console.error("Supabase 查询错误:", error);
+          setError(error.message);
+          setLoading(false);
+          return;
         }
-      )
-      .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+        let filteredProducts = data || [];
+
+        if (searchTerm) {
+          filteredProducts = filteredProducts.filter((product: Product) =>
+            product.name.toLowerCase().includes(searchTerm) ||
+            (product.description && product.description.toLowerCase().includes(searchTerm)) ||
+            (product.category && product.category.toLowerCase().includes(searchTerm))
+          );
+        }
+
+        setProducts(filteredProducts);
+      } catch (err: any) {
+        console.error("意外错误:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, [searchTerm]);
 
   const handleAddToCart = (product: Product) => {
     if (product.stock <= 0) {
@@ -90,23 +95,19 @@ function ShopContent() {
       stock: product.stock,
     });
 
-    toast.success(`Added ${product.name}`);
+    toast.success(`Added ${product.name}`, {
+      description: "You can check your cart anytime.",
+      duration: 1800,
+    });
+
+    window.dispatchEvent(new Event('addToCart'));
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-xl">Loading products...</div>;
-
-  const filteredProducts = products.filter(product => {
-    if (!searchTerm) return true;
-    return (
-      product.name.toLowerCase().includes(searchTerm) ||
-      (product.description && product.description.toLowerCase().includes(searchTerm)) ||
-      (product.category && product.category.toLowerCase().includes(searchTerm))
-    );
-  });
+  if (error) return <div className="min-h-screen flex items-center justify-center text-xl text-red-600">Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      {/* ... 标题部分保持不变 ... */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <h1 className="text-4xl font-bold text-center mb-4 text-gray-900">Our Collection</h1>
         <p className="text-gray-600 text-center mb-12">
