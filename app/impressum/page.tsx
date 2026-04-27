@@ -22,7 +22,7 @@ export default function ImpressumPage() {
           <h2 className="text-2xl font-semibold mt-10 mb-6 text-gray-900">Kontakt</h2>
           <p className="text-gray-800">
             Telefon: +49 1575 1330668<br />
-            E-Mail: kontakt@qi-kleinod.de
+            E-Mail: contact@qi-kleinod.com
           </p>
 
           <h2 className="text-2xl font-semibold mt-10 mb-6 text-gray-900">Umsatzsteuer-ID</h2>
