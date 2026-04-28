@@ -28,7 +28,7 @@ function SuccessContent() {
 
     const processOrder = async () => {
       try {
-        // 1. 读取购物车（必须在 clearCart 之前）
+        // 1. 读取购物车
         const lastCartStr = localStorage.getItem('qi-kleinod-cart');
         let items: any[] = [];
         let totalAmount = 0;
@@ -46,18 +46,48 @@ function SuccessContent() {
 
         console.log("读取到的购物车数据:", { totalAmount, items });
 
+        // ==================== 扣减库存（修复版） ====================
+        if (items.length > 0) {
+          console.log("开始扣减库存...");
+
+          for (const item of items) {
+            // 先获取当前库存
+            const { data: currentProduct } = await supabase
+              .from('products')
+              .select('stock')
+              .eq('id', item.id)
+              .single();
+
+            if (currentProduct && currentProduct.stock >= item.quantity) {
+              const newStock = currentProduct.stock - item.quantity;
+
+              const { error: stockError } = await supabase
+                .from('products')
+                .update({ stock: newStock })
+                .eq('id', item.id);
+
+              if (stockError) {
+                console.error(`扣减 ${item.name} 库存失败:`, stockError);
+              } else {
+                console.log(`✅ 已扣减 ${item.name} x${item.quantity}，剩余 ${newStock}`);
+              }
+            } else {
+              console.warn(`库存不足或商品不存在: ${item.name}`);
+            }
+          }
+        }
+        // ============================================================
+
         // 清空购物车
         clearCart();
 
         // 获取当前用户
         const { data: { user } } = await supabase.auth.getUser();
 
-        // 重要：从 Stripe 获取 session 和 metadata
+        // 获取 Stripe Session
         const stripeRes = await fetch(`/api/stripe/session?session_id=${sessionId}`);
         const stripeData = await stripeRes.json();
         const metadata = stripeData.metadata || {};
-
-        console.log("从 Stripe 收到的 metadata:", metadata);
 
         // 保存订单
         const { error: insertError } = await supabase.from('orders').insert({
@@ -132,7 +162,6 @@ function SuccessContent() {
               </div>
             </div>
 
-            {/* 显示收货地址 */}
             {orderInfo.shipping && orderInfo.shipping.shipping_fullName && (
               <div className="mt-8 pt-6 border-t">
                 <p className="font-medium mb-3">Shipping Address</p>
@@ -146,7 +175,7 @@ function SuccessContent() {
             )}
 
             {orderSaved && (
-              <p className="text-green-600 mt-6">✅ Order saved with shipping information</p>
+              <p className="text-green-600 mt-6">✅ Order saved successfully</p>
             )}
           </div>
         )}
