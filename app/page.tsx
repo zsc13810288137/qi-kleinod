@@ -2,81 +2,59 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import { useCartStore } from '@/lib/cartStore';
 import { toast } from 'sonner';
-import { createClient } from '@/lib/supabase';
-
-const supabase = createClient();
 
 export default function HomePage() {
   const addToCart = useCartStore((state) => state.addToCart);
-  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // 获取 Featured 商品（仿照 Shop 页写法）
-  const fetchFeatured = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .order('id', { ascending: true });
-
-    if (error) {
-      console.error("获取精选商品失败:", error);
-    } else {
-      // 只取 Qi's Collection 的前4个，并按图片编号排序
-      const qisItems = (data || [])
-        .filter(p => p.images?.[0]?.includes('Qi_Collection_Neclace'))
-        .sort((a: any, b: any) => {
-          const numA = parseInt(a.images?.[0]?.match(/(\d+)/)?.[0] || '0');
-          const numB = parseInt(b.images?.[0]?.match(/(\d+)/)?.[0] || '0');
-          return numA - numB;
-        })
-        .slice(0, 4);
-
-      setFeaturedProducts(qisItems);
+  // 使用你 Supabase 中真实的商品 ID
+  const featuredProducts = [
+    {
+      id: "12fac915-4dab-49a6-9356-0b66d3ef43bb",
+      name: "Sleeping Koala Ring",
+      price: 169,
+      image: "/images/koala3.png",
+      description: "Dreamy rose gold ring with a sleeping koala"
+    },
+    {
+      id: "4e8e0622-f8de-4f7d-aae9-75c930a34f82",
+      name: "Baby Koala Pearl Earrings",
+      price: 95,
+      image: "/images/koala2.png",
+      description: "Super cute baby koala pearl earrings"
+    },
+    {
+      id: "6d1265f9-7ffb-44f9-8291-5bbe0c3bf59a",
+      name: "Koala Eucalyptus Bracelet",
+      price: 219,
+      image: "/images/koala5.png",
+      description: "Elegant bracelet with koala and eucalyptus leaf charm"
+    },
+    {
+      id: "8e53617b-7f87-4d72-88e2-fdbe4390eb7c",
+      name: "Little Koala Emerald Pendant",
+      price: 259,
+      image: "/images/koala4.png",
+      description: "Beautiful emerald pendant with an incredible koala design"
     }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchFeatured();
-  }, []);
-
-  // 实时更新库存
-  useEffect(() => {
-    const channel = supabase
-      .channel('featured-changes')
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'products' 
-      }, fetchFeatured)
-      .subscribe();
-
-    return () => supabase.removeChannel(channel);
-  }, []);
+  ];
 
   const handleAddToCart = (product: any) => {
-    if (product.stock <= 0) {
-      toast.error("This product is out of stock.");
-      return;
-    }
-
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0] || '',
-      stock: product.stock,
+      image: product.image,
     });
 
+    // 显示 Toast
     toast.success(`Added ${product.name}`, {
       description: "You can check your cart anytime.",
       duration: 2200,
     });
 
+    // 触发全局 +1 动画（通知 layout）
     window.dispatchEvent(new Event('addToCart'));
   };
 
@@ -107,7 +85,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-2xl md:text-3xl text-white/90 mb-10 max-w-2xl mx-auto leading-tight">
-            Qi's creative-inspired handmade jewelry<br />
+            Adorable koala-inspired jewelry<br />
             that brings joy and elegance to your everyday life
           </p>
 
@@ -126,83 +104,76 @@ export default function HomePage() {
               Explore Stories
             </Link>
           </div>
+
+          <div className="mt-16 text-white/60 text-sm tracking-widest">
+            Free shipping on orders over €150 • 30-day returns
+          </div>
+        </div>
+
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
+          ↓
         </div>
       </div>
 
-      {/* 精选商品 */}
+      {/* 精选商品模块 */}
       <div className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-4xl font-bold text-gray-900">Featured Collection</h2>
-              <p className="text-gray-600 mt-2">New arrivals from Qi's Collection</p>
+              <p className="text-gray-600 mt-2">Handpicked favorites with koala magic</p>
             </div>
             <Link href="/shop" className="text-black hover:underline font-medium">
               View All →
             </Link>
           </div>
 
-          {loading ? (
-            <div className="text-center py-12">Loading featured items...</div>
-          ) : featuredProducts.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">No featured products found</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {featuredProducts.map((product) => (
-                <div key={product.id} className="group bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all flex flex-col">
-                  <Link href={`/shop/${product.id}`} className="block relative h-72 bg-white flex items-center justify-center p-6 overflow-hidden">
-                    {product.images?.[0] ? (
-                      <Image
-                        src={product.images[0]}
-                        alt={product.name}
-                        width={280}
-                        height={280}
-                        className="object-contain transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="text-gray-400">No Image</div>
-                    )}
-                  </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map((product) => (
+              <div key={product.id} className="group bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all">
+                <Link href={`/shop/${product.id}`} className="block relative h-80 bg-gray-100 overflow-hidden">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </Link>
 
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="font-semibold text-lg mb-1 text-gray-900 line-clamp-2">{product.name}</h3>
-                    <p className="text-emerald-600 font-bold text-xl mb-4">
-                      €{product.price}
-                    </p>
-                    <p className="text-sm text-gray-600 line-clamp-2 mb-6 flex-1">
-                      {product.description}
-                    </p>
+                <div className="p-6">
+                  <h3 className="font-semibold text-lg mb-1 text-gray-900">{product.name}</h3>
+                  <p className="text-emerald-600 font-bold text-xl mb-4">
+                    €{product.price}
+                  </p>
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-6">
+                    {product.description}
+                  </p>
 
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (product.stock <= 0) {
-                          toast.error("This product is out of stock.");
-                          return;
-                        }
-                        addToCart({
-                          id: product.id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.images?.[0] || '',
-                          stock: product.stock,
-                        });
-                        toast.success(`Added ${product.name}`);
-                        window.dispatchEvent(new Event('addToCart'));
-                      }}
-                      disabled={product.stock <= 0}
-                      className={`w-full py-3 rounded-2xl transition font-medium mt-auto
-                        ${product.stock > 0 
-                          ? 'bg-black text-white hover:bg-gray-800' 
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-                    >
-                      {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                    </button>
-                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // 调用全局 Add to Cart（带 Toast 和 +1 动画）
+                      const cartItem = {
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                      };
+                      addToCart(cartItem);
+                      toast.success(`Added ${product.name}`, {
+                        description: "You can check your cart anytime.",
+                        duration: 2200,
+                      });
+                      window.dispatchEvent(new Event('addToCart'));
+                    }}
+                    className="w-full bg-black text-white py-3 rounded-2xl hover:bg-gray-800 transition font-medium"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
