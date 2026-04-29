@@ -50,17 +50,29 @@ function ShopContent() {
     setLoading(false);
   };
 
+  // 初始加载
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // 实时订阅（正确写法）
   useEffect(() => {
     const channel = supabase
       .channel('products-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, fetchProducts)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        () => {
+          console.log('实时更新触发，刷新列表');
+          fetchProducts();
+        }
+      )
       .subscribe();
 
-    return () => supabase.removeChannel(channel);
+    // 清理函数必须同步
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleAddToCart = (product: Product) => {
@@ -68,6 +80,7 @@ function ShopContent() {
       toast.error("This product is out of stock.");
       return;
     }
+
     addToCart({
       id: product.id,
       name: product.name,
@@ -75,6 +88,7 @@ function ShopContent() {
       image: product.images?.[0] || '',
       stock: product.stock,
     });
+
     toast.success(`Added ${product.name}`);
   };
 
@@ -84,7 +98,8 @@ function ShopContent() {
     if (!searchTerm) return true;
     return (
       product.name.toLowerCase().includes(searchTerm) ||
-      (product.description && product.description.toLowerCase().includes(searchTerm))
+      (product.description && product.description.toLowerCase().includes(searchTerm)) ||
+      (product.category && product.category.toLowerCase().includes(searchTerm))
     );
   });
 
@@ -155,7 +170,6 @@ function ShopContent() {
           </div>
         </div>
 
-        {/* Koala & Fox Collection 使用相同卡片结构 */}
         {/* Koala Collection */}
         <div className="mb-16">
           <h2 className="text-3xl font-semibold mb-8 text-center text-gray-900">Koala Collection</h2>
