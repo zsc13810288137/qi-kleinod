@@ -2,62 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCartStore } from '@/lib/cartStore';
-import { toast } from 'sonner';
 
 export default function HomePage() {
-  const addToCart = useCartStore((state) => state.addToCart);
-
-  // 使用你 Supabase 中真实的商品 ID
-  const featuredProducts = [
-    {
-      id: "12fac915-4dab-49a6-9356-0b66d3ef43bb",
-      name: "Sleeping Koala Ring",
-      price: 169,
-      image: "/images/koala3.png",
-      description: "Dreamy rose gold ring with a sleeping koala"
-    },
-    {
-      id: "4e8e0622-f8de-4f7d-aae9-75c930a34f82",
-      name: "Baby Koala Pearl Earrings",
-      price: 95,
-      image: "/images/koala2.png",
-      description: "Super cute baby koala pearl earrings"
-    },
-    {
-      id: "6d1265f9-7ffb-44f9-8291-5bbe0c3bf59a",
-      name: "Koala Eucalyptus Bracelet",
-      price: 219,
-      image: "/images/koala5.png",
-      description: "Elegant bracelet with koala and eucalyptus leaf charm"
-    },
-    {
-      id: "8e53617b-7f87-4d72-88e2-fdbe4390eb7c",
-      name: "Little Koala Emerald Pendant",
-      price: 259,
-      image: "/images/koala4.png",
-      description: "Beautiful emerald pendant with an incredible koala design"
-    }
-  ];
-
-  const handleAddToCart = (product: any) => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-    });
-
-    // 显示 Toast
-    toast.success(`Added ${product.name}`, {
-      description: "You can check your cart anytime.",
-      duration: 2200,
-    });
-
-    // 触发全局 +1 动画（通知 layout）
-    window.dispatchEvent(new Event('addToCart'));
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -112,68 +58,6 @@ export default function HomePage() {
 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
           ↓
-        </div>
-      </div>
-
-      {/* 精选商品模块 */}
-      <div className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-4xl font-bold text-gray-900">Featured Collection</h2>
-              <p className="text-gray-600 mt-2">Handpicked favorites with koala magic</p>
-            </div>
-            <Link href="/shop" className="text-black hover:underline font-medium">
-              View All →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
-              <div key={product.id} className="group bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all">
-                <Link href={`/shop/${product.id}`} className="block relative h-80 bg-gray-100 overflow-hidden">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </Link>
-
-                <div className="p-6">
-                  <h3 className="font-semibold text-lg mb-1 text-gray-900">{product.name}</h3>
-                  <p className="text-emerald-600 font-bold text-xl mb-4">
-                    €{product.price}
-                  </p>
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-6">
-                    {product.description}
-                  </p>
-
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      // 调用全局 Add to Cart（带 Toast 和 +1 动画）
-                      const cartItem = {
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image,
-                      };
-                      addToCart(cartItem);
-                      toast.success(`Added ${product.name}`, {
-                        description: "You can check your cart anytime.",
-                        duration: 2200,
-                      });
-                      window.dispatchEvent(new Event('addToCart'));
-                    }}
-                    className="w-full bg-black text-white py-3 rounded-2xl hover:bg-gray-800 transition font-medium"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
