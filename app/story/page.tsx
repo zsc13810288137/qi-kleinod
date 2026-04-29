@@ -50,8 +50,8 @@ export default function OurStoryPage() {
             <div className="prose prose-lg text-gray-700 space-y-6">
               <p>
                 {t(
-                  "Born in Beijing in 1954 into a family of intellectuals, Qi Zhuang has always had a deep appreciation for beauty, craftsmanship, and elegance.",
-                  "Geboren 1954 in Beijing in einer Familie von Intellektuellen, hat Qi Zhuang schon immer eine tiefe Wertschätzung für Schönheit, Handwerkskunst und Eleganz gehabt."
+                  "Born in Beijing in a family of intellectuals, Qi Zhuang has always had a deep appreciation for beauty, craftsmanship, and elegance.",
+                  "Geboren in Beijing in einer Familie von Intellektuellen, hat Qi Zhuang schon immer eine tiefe Wertschätzung für Schönheit, Handwerkskunst und Eleganz gehabt."
                 )}
               </p>
               <p>
